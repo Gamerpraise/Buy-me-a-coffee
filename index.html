@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thank You - Gpraise</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:#120505;color:#fff;font-family:Arial,sans-serif;
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:16px;overflow:hidden;
+}
+.wrap{width:100%;max-width:400px;z-index:2;position:relative}
+.card{
+  background:#1c0a0a;border:1px solid #ff222233;border-radius:22px;
+  padding:26px 20px;text-align:center;position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:radial-gradient(circle at 30% 20%, #ff0a0a18, transparent 40%);
+  animation:slowMove 6s ease-in-out infinite alternate;pointer-events:none;
+}
+@keyframes slowMove{to{transform:translate(20px,20px)}}
+.badge{color:#ff8a8a;font-size:11px;letter-spacing:1px;margin-bottom:10px;position:relative}
+h1{font-size:30px;position:relative}h1 span{color:#ff2a2a}
+p{font-size:13px;color:#ffffff99;line-height:1.6;margin:10px 0;position:relative} p b{color:#fff}
+input{width:100%;background:#000;border:1px solid #ffffff18;border-radius:12px;padding:12px;color:#fff;outline:none;margin:10px 0;font-size:15px;position:relative}
+.btn{width:100%;padding:12px;border-radius:12px;border:none;font-weight:700;cursor:pointer;position:relative}
+.red{background:#ff0a0a;color:#fff}.ghost{background:#ffffff10;color:#aaa;margin-top:8px}
+#out{display:none;margin-top:12px}canvas{width:100%;border-radius:14px;display:block}
+.hint{font-size:10px;color:#ffffff44;margin-top:8px;text-align:center}
+
+/* light heart pop */
+.heart{
+  position:fixed;pointer-events:none;z-index:10;
+  animation:float 1s ease-out forwards;
+}
+@keyframes float{
+  0%{transform:translate(-50%,-50%) scale(0);opacity:1}
+  100%{transform:translate(var(--x), var(--y)) scale(1);opacity:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="badge">❤️ GPRAISE LOVES YOU ❤️</div>
+    <h1>You're a <span>Legend!</span> 💖</h1>
+    <p>Your support <b>motivates me, Praise, to generate more crazy ideas, build more free tools, and never stop creating</b>. You didn't just buy coffee, you fueled my next idea!</p>
+    <input id="name" placeholder="Your name e.g David" maxlength="18">
+    <button class="btn red" onclick="gen(event)">✨ Generate My Card</button>
+    <button class="btn ghost" onclick="location.href='/'">Back Home</button>
+    <div id="out">
+      <canvas id="c" width="1080" height="1080"></canvas>
+      <button class="btn red" style="margin-top:10px" onclick="dl(event)">💾 Download & Tag @Gpraise</button>
+      <div class="hint">Tap anywhere for more love 💥</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function pop(x,y){
+  const icons=['❤️','💖','💕'];
+  for(let i=0;i<6;i++){
+    const h=document.createElement('div');
+    h.className='heart'; h.textContent=icons[Math.floor(Math.random()*3)];
+    h.style.left=x+'px'; h.style.top=y+'px';
+    h.style.setProperty('--x', (Math.random()*200-100)+'px');
+    h.style.setProperty('--y', (Math.random()*200-150)+'px');
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),1000);
+  }
+}
+document.body.addEventListener('click', e=>{
+  if(e.target.tagName==='INPUT' || e.target.tagName==='BUTTON' || e.target.tagName==='CANVAS') return;
+  pop(e.clientX,e.clientY);
+});
+document.body.addEventListener('touchstart', e=>{
+  if(e.target.tagName==='INPUT' || e.target.tagName==='BUTTON') return;
+  pop(e.touches[0].clientX,e.touches[0].clientY);
+},{passive:true});
+
+const c=document.getElementById('c'), ctx=c.getContext('2d');
+function gen(e){
+  e.stopPropagation(); pop(innerWidth/2, innerHeight/2);
+  const name=document.getElementById('name').value.trim()||'Supporter';
+  document.getElementById('out').style.display='block';
+  // card draw
+  ctx.fillStyle='#1a0505'; ctx.fillRect(0,0,1080,1080);
+  ctx.fillStyle='#ff0a0a14'; ctx.beginPath(); ctx.arc(850,150,400,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#ff222233'; ctx.lineWidth=2; ctx.strokeRect(40,40,1000,1000);
+  ctx.fillStyle='#ff4a4a'; ctx.font='bold 28px Arial'; ctx.fillText('GPRAISE • THANK YOU',70,110);
+  ctx.fillStyle='#fff'; ctx.font='bold 66px Arial'; ctx.fillText('Thank You,',70,240);
+  ctx.fillStyle='#ff2a2a'; ctx.fillText(name+'!',70,320);
+  ctx.fillStyle='#ffffffcc'; ctx.font='21px Arial';
+  let y=410;
+  const lines=[
+    "Your support motivates me, Praise, to generate",
+    "more crazy ideas, build more free tools, and",
+    "never stop creating for everyone.",
+    "",
+    "You didn't just buy me a coffee, you invested",
+    "in my dream and became part of my story.",
+    "I see you, I appreciate you, and I promise to",
+    "make you proud with what I build next. ❤️"
+  ];
+  lines.forEach(l=>{ ctx.fillText(l,70,y); y+=32; });
+  ctx.fillStyle='#ffffff66'; ctx.font='19px Arial'; ctx.fillText('— Gpraise 🥺❤️',70,720);
+  ctx.fillStyle='#ffffff33'; ctx.font='16px Arial'; ctx.fillText('binary-ghosts.vercel.app • @Gpraise',70,1020);
+  setTimeout(()=>document.getElementById('out').scrollIntoView({behavior:'smooth'}),100);
+}
+function dl(e){
+  e.stopPropagation(); pop(e.clientX||innerWidth/2, e.clientY||innerHeight/2);
+  const a=document.createElement('a');
+  a.download=`Gpraise-ThankYou-${document.getElementById('name').value||'supporter'}.png`;
+  a.href=c.toDataURL('image/png'); a.click();
+}
+</script>
+</body>
+</html>
